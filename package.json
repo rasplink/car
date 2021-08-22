@@ -1,0 +1,23 @@
+{
+  "name": "car",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "sudo chmod a+rwx /dev/ttyACM0 && node index.js"
+  },
+  "keywords": [
+    "nodebot",
+    "car",
+    "robot"
+  ],
+  "author": "Eissa Saber",
+  "license": "MIT",
+  "dependencies": {
+    "colors": "^1.4.0",
+    "express": "^4.17.1",
+    "johnny-five": "^2.1.0",
+    "keypress": "^0.2.1",
+    "serialport": "^9.2.0"
+  }
+}
