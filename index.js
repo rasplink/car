@@ -1,13 +1,13 @@
 const express = require("express");
 const app = express();
 const path = require("path");
-const { Board, Motor } = require("johnny-five");
+const { Board, Motor, Led } = require("johnny-five"); // works on node 10.0.0
 const keypress = require("keypress");
 const colors = require("colors");
 
 class Car {
-  speed = 255;
   constructor() {
+    this.speed = 255;
     this.init();
   }
 
@@ -15,8 +15,10 @@ class Car {
     const board = new Board();
     board.on("ready", () => {
       console.log(colors.blue.bold("Board is Ready"));
+      // new Led(13).blink(1000); // uncomment to test board
       this.motor1 = new Motor({ pin: 5 });
       this.motor2 = new Motor({ pin: 6 });
+      // board.repl.inject({ motor1: this.motor1 });
       board.repl.inject({ motor1: this.motor1, motor2: this.motor2 });
       this.motor1.on("start", () => console.log(colors.green.bold("motor1 started")));
       this.motor2.on("start", () => console.log(colors.green.bold("motor2 started")));
@@ -53,17 +55,17 @@ class Car {
 
   control(type) {
     if (type === "forward") {
-      this.motor1.start(this.speed);
-      this.motor2.start(this.speed);
+      if (!this.motor1.isOn) this.motor1.start(this.speed);
+      if (!this.motor2.isOn) this.motor2.start(this.speed);
     } else if (type === "left") {
-      this.motor1.start(this.speed);
-      this.motor2.stop();
+      if (!this.motor2.isOn) this.motor2.start(this.speed);
+      if (this.motor1.isOn) this.motor1.stop();
     } else if (type === "right") {
-      this.motor2.start(this.speed);
-      this.motor1.stop();
+      if (!this.motor1.isOn) this.motor1.start(this.speed);
+      if (this.motor2.isOn) this.motor2.stop();
     } else if (type === "idle") {
-      this.motor1.stop();
-      this.motor2.stop();
+      if (this.motor1.isOn) this.motor1.stop();
+      if (this.motor2.isOn) this.motor2.stop();
     }
   }
 
