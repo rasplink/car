@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const path = require("path");
-const { Board, Motor, Led } = require("johnny-five"); // works on node 10.0.0
+const { Board, Motor, Led, Relays } = require("johnny-five"); // works on node 10.0.0
 const keypress = require("keypress");
 const colors = require("colors");
 
@@ -16,9 +16,18 @@ class Car {
     board.on("ready", () => {
       console.log(colors.blue.bold("Board is Ready"));
       // new Led(13).blink(1000); // uncomment to test board
+
+      // start handle motors forward/backward
+      const relays = new Relays([10, 7]);
+      this.relay1 = relays[0]; // relay on pin 10
+      this.relay2 = relays[1]; // relay on pin 7
+      // reset
+      this.relay1.close();
+      this.relay2.close();
+      // end handle motors forward/backward
+
       this.motor1 = new Motor({ pin: 5 });
       this.motor2 = new Motor({ pin: 6 });
-      // board.repl.inject({ motor1: this.motor1 });
       board.repl.inject({ motor1: this.motor1, motor2: this.motor2 });
       this.motor1.on("start", () => console.log(colors.green.bold("motor1 started")));
       this.motor2.on("start", () => console.log(colors.green.bold("motor2 started")));
@@ -26,7 +35,6 @@ class Car {
       this.motor2.on("stop", () => console.log(colors.red.bold("motor2 stoped")));
 
       this.server();
-      // this.control2();
     });
   }
 
@@ -54,16 +62,27 @@ class Car {
   }
 
   control(type) {
+    // reset relays
+    this.relay1.close();
+    this.relay2.close();
+
     if (type === "forward") {
       if (!this.motor1.isOn) this.motor1.start(this.speed);
       if (!this.motor2.isOn) this.motor2.start(this.speed);
-    } else if (type === "left") {
+    } else if (type === "back") {
+      // reverse right
+      this.relay1.open();
+      this.relay2.open();
       if (!this.motor2.isOn) this.motor2.start(this.speed);
       if (this.motor1.isOn) this.motor1.stop();
-    } else if (type === "right") {
+      // todo reverse left | do the same as right above
+    } else if (type === "left") {
       if (!this.motor1.isOn) this.motor1.start(this.speed);
       if (this.motor2.isOn) this.motor2.stop();
-    } else if (type === "idle") {
+    } else if (type === "right") {
+      if (!this.motor2.isOn) this.motor2.start(this.speed);
+      if (this.motor1.isOn) this.motor1.stop();
+    } else if (["idle", "stop"].includes(type)) {
       if (this.motor1.isOn) this.motor1.stop();
       if (this.motor2.isOn) this.motor2.stop();
     }
