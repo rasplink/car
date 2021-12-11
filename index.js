@@ -18,12 +18,16 @@ class Car {
       // new Led(13).blink(1000); // uncomment to test board
 
       // start handle motors forward/backward
-      const relays = new Relays([10, 7]);
-      this.relay1 = relays[0]; // relay on pin 10
-      this.relay2 = relays[1]; // relay on pin 7
+      const relays = new Relays([7, 8, 9, 10]);
+      this.relay1 = relays[0]; // relay on pin 7
+      this.relay2 = relays[1]; // relay on pin 8
+      this.relay3 = relays[2]; // relay on pin 9
+      this.relay4 = relays[3]; // relay on pin 10
       // reset
       this.relay1.close();
       this.relay2.close();
+      this.relay3.close();
+      this.relay4.close();
       // end handle motors forward/backward
 
       this.motor1 = new Motor({ pin: 5 });
@@ -62,29 +66,72 @@ class Car {
   }
 
   control(type) {
-    // reset relays
-    this.relay1.close();
-    this.relay2.close();
+    // forward/backward = motor1
+    // right/left = motor2
+    const resetRelays = () => {
+      this.relay1.close();
+      this.relay2.close();
+      this.relay3.close();
+      this.relay4.close();
+    };
+    resetRelays();
 
-    if (type === "forward") {
+    const forward = () => {
       if (!this.motor1.isOn) this.motor1.start(this.speed);
-      if (!this.motor2.isOn) this.motor2.start(this.speed);
-    } else if (type === "back") {
-      // reverse right
+    };
+
+    const backward = () => {
       this.relay1.open();
       this.relay2.open();
-      if (!this.motor2.isOn) this.motor2.start(this.speed);
-      if (this.motor1.isOn) this.motor1.stop();
-      // todo reverse left | do the same as right above
-    } else if (type === "left") {
       if (!this.motor1.isOn) this.motor1.start(this.speed);
-      if (this.motor2.isOn) this.motor2.stop();
-    } else if (type === "right") {
+    };
+
+    const right = () => {
       if (!this.motor2.isOn) this.motor2.start(this.speed);
+    };
+
+    const left = () => {
+      this.relay3.open();
+      this.relay4.open();
+      if (!this.motor2.isOn) this.motor2.start(this.speed);
+    };
+
+    const stopMotor1 = () => {
       if (this.motor1.isOn) this.motor1.stop();
-    } else if (["idle", "stop"].includes(type)) {
-      if (this.motor1.isOn) this.motor1.stop();
+    };
+
+    const stopMotor2 = () => {
       if (this.motor2.isOn) this.motor2.stop();
+    };
+
+    if (type === "forward") {
+      stopMotor2();
+      forward();
+    } else if (type === "backward") {
+      stopMotor2();
+      backward();
+    } else if (type === "right") {
+      stopMotor1();
+      right();
+    } else if (type === "left") {
+      stopMotor1();
+      left();
+    } else if (type === "forwardRight") {
+      forward();
+      right();
+    } else if (type === "forwardLeft") {
+      forward();
+      left();
+    } else if (type === "backwardRight") { // todo fix backward right when all relayes on
+      backward();
+      right();
+    } else if (type === "backwardLeft") {
+      backward();
+      left();
+    } else if (["idle", "stop"].includes(type)) {
+      stopMotor1();
+      stopMotor2();
+      resetRelays();
     }
   }
 
