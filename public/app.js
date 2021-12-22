@@ -1,5 +1,6 @@
 const guide = $("#guide");
 const origin = new Origin();
+const host = "http://192.168.1.55";
 let oneKeyToggle = true;
 let twoKeysToggle = true;
 let isRunning = false;
@@ -31,16 +32,27 @@ function detect(e) {
   // debug([finalKeys]);
 
   if (!finalKeys.length && e.type === "keyup" && [37, 38, 39, 40].includes(e.keyCode)) return idle();
-  if (e.type === "keydown" && e.keyCode === 32) return stop(); // todo fix space key (32) not working with forwardLeft & backRight
-
-  if (finalKeys.length === 2 && finalKeys.includes(38) && finalKeys.includes(39)) forwardRight();
-  else if (finalKeys.length === 2 && finalKeys.includes(38) && finalKeys.includes(37)) forwardLeft();
-  else if (finalKeys.length === 2 && finalKeys.includes(40) && finalKeys.includes(39)) backwardRight();
-  else if (finalKeys.length === 2 && finalKeys.includes(40) && finalKeys.includes(37)) backwardLeft();
+  if (e.type === "keydown" && e.keyCode === 32) return stop();
+  // todo fix space key (32) not working with forwardLeft & backRight
+  // if (finalKeys.length === 2 && finalKeys.includes(38) && finalKeys.includes(39)) forwardRight();
+  // else if (finalKeys.length === 2 && finalKeys.includes(38) && finalKeys.includes(37)) forwardLeft();
+  // else if (finalKeys.length === 2 && finalKeys.includes(40) && finalKeys.includes(39)) backwardRight();
+  // else if (finalKeys.length === 2 && finalKeys.includes(40) && finalKeys.includes(37)) backwardLeft();
   else if (finalKeys.length === 1 && finalKeys[0] === 38) forward();
   else if (finalKeys.length === 1 && finalKeys[0] === 40) backward();
   else if (finalKeys.length === 1 && finalKeys[0] === 39) right();
   else if (finalKeys.length === 1 && finalKeys[0] === 37) left();
+  else if (e.type === "keydown" && e.keyCode === 17) auto();
+}
+
+function auto() {
+  if (oneKeyToggle) {
+    oneKeyToggle = false;
+    isRunning = true;
+    guide.textContent = "auto";
+    debug("auto");
+    signal("auto");
+  }
 }
 
 function forwardRight() {
@@ -140,5 +152,27 @@ function idle() {
 }
 
 function signal(type) {
-  origin.post("/signal", { body: { type }, headers: { "Content-Type": "application/json" } });
+  function freeze() {
+    origin.get(host + "/pin4/off");
+    origin.get(host + "/pin5/off");
+    origin.get(host + "/pin6/off");
+    origin.get(host + "/pin7/off");
+  }
+  freeze();
+
+  if (type === "forward") {
+    origin.get(host + "/pin4/on");
+    origin.get(host + "/pin6/on");
+  } else if (type === "backward") {
+    origin.get(host + "/pin4/on");
+    origin.get(host + "/pin5/on");
+    origin.get(host + "/pin6/on");
+    origin.get(host + "/pin7/on");
+  } else if (type === "right") {
+    origin.get(host + "/pin4/on");
+  } else if (type === "left") {
+    origin.get(host + "/pin5/on");
+  } else if (["idle", "stop"].includes(type)) {
+    freeze();
+  }
 }
