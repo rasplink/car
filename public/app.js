@@ -152,27 +152,36 @@ function idle() {
 }
 
 function signal(type) {
-  function freeze() {
-    origin.get(host + "/pin4/off");
-    origin.get(host + "/pin5/off");
-    origin.get(host + "/pin6/off");
-    origin.get(host + "/pin7/off");
-  }
-  freeze();
-
   if (type === "forward") {
-    origin.get(host + "/pin4/on");
-    origin.get(host + "/pin6/on");
+    origin
+      .get(host + "/pin5/off")
+      .then(() => origin.get(host + "/pin7/off"))
+      .then(() => origin.get(host + "/pin4/on"))
+      .then(() => origin.get(host + "/pin6/on"));
+    // actual
   } else if (type === "backward") {
-    origin.get(host + "/pin4/on");
-    origin.get(host + "/pin5/on");
-    origin.get(host + "/pin6/on");
-    origin.get(host + "/pin7/on");
+    origin
+      .get(host + "/pin4/on")
+      .then(() => origin.get(host + "/pin5/on"))
+      .then(() => origin.get(host + "/pin6/on"))
+      .then(() => origin.get(host + "/pin7/on"));
   } else if (type === "right") {
-    origin.get(host + "/pin4/on");
+    origin
+      .get(host + "/pin6/off")
+      .then(() => origin.get(host + "/pin5/off"))
+      .then(() => origin.get(host + "/pin7/off"))
+      .then(() => origin.get(host + "/pin4/on"));
   } else if (type === "left") {
-    origin.get(host + "/pin5/on");
+    origin
+      .get(host + "/pin4/off")
+      .then(() => origin.get(host + "/pin6/off"))
+      .then(() => origin.get(host + "/pin7/off"))
+      .then(() => origin.get(host + "/pin5/on"));
   } else if (["idle", "stop"].includes(type)) {
-    freeze();
+    origin
+      .get(host + "/pin4/off")
+      .then(() => origin.get(host + "/pin6/off"))
+      .then(() => origin.get(host + "/pin5/off"))
+      .then(() => origin.get(host + "/pin7/off"));
   }
 }
