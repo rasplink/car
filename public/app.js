@@ -34,10 +34,10 @@ function detect(e) {
   if (!finalKeys.length && e.type === "keyup" && [37, 38, 39, 40].includes(e.keyCode)) return idle();
   if (e.type === "keydown" && e.keyCode === 32) return stop();
   // todo fix space key (32) not working with forwardLeft & backRight
-  // if (finalKeys.length === 2 && finalKeys.includes(38) && finalKeys.includes(39)) forwardRight();
-  // else if (finalKeys.length === 2 && finalKeys.includes(38) && finalKeys.includes(37)) forwardLeft();
-  // else if (finalKeys.length === 2 && finalKeys.includes(40) && finalKeys.includes(39)) backwardRight();
-  // else if (finalKeys.length === 2 && finalKeys.includes(40) && finalKeys.includes(37)) backwardLeft();
+  if (finalKeys.length === 2 && finalKeys.includes(38) && finalKeys.includes(39)) forwardRight();
+  else if (finalKeys.length === 2 && finalKeys.includes(38) && finalKeys.includes(37)) forwardLeft();
+  else if (finalKeys.length === 2 && finalKeys.includes(40) && finalKeys.includes(39)) backwardRight();
+  else if (finalKeys.length === 2 && finalKeys.includes(40) && finalKeys.includes(37)) backwardLeft();
   else if (finalKeys.length === 1 && finalKeys[0] === 38) forward();
   else if (finalKeys.length === 1 && finalKeys[0] === 40) backward();
   else if (finalKeys.length === 1 && finalKeys[0] === 39) right();
@@ -154,29 +154,52 @@ function idle() {
 function signal(type) {
   if (type === "forward") {
     origin
-      .get(host + "/pin5/off")
-      .then(() => origin.get(host + "/pin7/off"))
-      .then(() => origin.get(host + "/pin4/on"))
-      .then(() => origin.get(host + "/pin6/on"));
-    // actual
+      .get(host + "/pin4/off")
+      .then(() => origin.get(host + "/pin5/on"))
+      .then(() => origin.get(host + "/pin6/off"))
+      .then(() => origin.get(host + "/pin7/off"));
   } else if (type === "backward") {
     origin
-      .get(host + "/pin5/on")
+      .get(host + "/pin4/on")
+      .then(() => origin.get(host + "/pin5/off"))
       .then(() => origin.get(host + "/pin6/off"))
-      .then(() => origin.get(host + "/pin7/on"))
-      .then(() => origin.get(host + "/pin4/off"));
+      .then(() => origin.get(host + "/pin7/off"));
   } else if (type === "right") {
     origin
       .get(host + "/pin4/off")
       .then(() => origin.get(host + "/pin5/off"))
-      .then(() => origin.get(host + "/pin7/off"))
-      .then(() => origin.get(host + "/pin6/on"));
+      .then(() => origin.get(host + "/pin6/on"))
+      .then(() => origin.get(host + "/pin7/off"));
   } else if (type === "left") {
     origin
-      .get(host + "/pin6/off")
+      .get(host + "/pin4/off")
       .then(() => origin.get(host + "/pin5/off"))
-      .then(() => origin.get(host + "/pin7/off"))
-      .then(() => origin.get(host + "/pin4/on"));
+      .then(() => origin.get(host + "/pin6/off"))
+      .then(() => origin.get(host + "/pin7/on"));
+  } else if (type === "forwardRight") {
+    origin
+      .get(host + "/pin4/off")
+      .then(() => origin.get(host + "/pin5/on"))
+      .then(() => origin.get(host + "/pin6/on"))
+      .then(() => origin.get(host + "/pin7/off"));
+  } else if (type === "forwardLeft") {
+    origin
+      .get(host + "/pin4/off")
+      .then(() => origin.get(host + "/pin5/on"))
+      .then(() => origin.get(host + "/pin6/off"))
+      .then(() => origin.get(host + "/pin7/on"));
+  } else if (type === "backwardRight") {
+    origin
+      .get(host + "/pin4/on")
+      .then(() => origin.get(host + "/pin5/off"))
+      .then(() => origin.get(host + "/pin6/on"))
+      .then(() => origin.get(host + "/pin7/off"));
+  } else if (type === "backwardLeft") {
+    origin
+      .get(host + "/pin4/on")
+      .then(() => origin.get(host + "/pin5/off"))
+      .then(() => origin.get(host + "/pin6/off"))
+      .then(() => origin.get(host + "/pin7/on"));
   } else if (["idle", "stop"].includes(type)) {
     origin
       .get(host + "/pin4/off")
