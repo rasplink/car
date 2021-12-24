@@ -196,58 +196,22 @@ function idle() {
 
 function signal(type) {
   if (type === "forward") {
-    origin
-      .get(host + "/pin4/off")
-      .then(() => origin.get(host + "/pin5/on"))
-      .then(() => origin.get(host + "/pin6/off"))
-      .then(() => origin.get(host + "/pin7/off"));
+    origin.get(host + "/car/forward");
   } else if (type === "backward") {
-    origin
-      .get(host + "/pin4/on")
-      .then(() => origin.get(host + "/pin5/off"))
-      .then(() => origin.get(host + "/pin6/off"))
-      .then(() => origin.get(host + "/pin7/off"));
+    origin.get(host + "/car/backward");
   } else if (type === "right") {
-    origin
-      .get(host + "/pin4/off")
-      .then(() => origin.get(host + "/pin5/off"))
-      .then(() => origin.get(host + "/pin6/on"))
-      .then(() => origin.get(host + "/pin7/off"));
+    origin.get(host + "/car/right");
   } else if (type === "left") {
-    origin
-      .get(host + "/pin4/off")
-      .then(() => origin.get(host + "/pin5/off"))
-      .then(() => origin.get(host + "/pin6/off"))
-      .then(() => origin.get(host + "/pin7/on"));
+    origin.get(host + "/car/left");
   } else if (type === "forwardRight") {
-    origin
-      .get(host + "/pin4/off")
-      .then(() => origin.get(host + "/pin5/on"))
-      .then(() => origin.get(host + "/pin6/on"))
-      .then(() => origin.get(host + "/pin7/off"));
+    origin.get(host + "/car/forwardRight");
   } else if (type === "forwardLeft") {
-    origin
-      .get(host + "/pin4/off")
-      .then(() => origin.get(host + "/pin5/on"))
-      .then(() => origin.get(host + "/pin6/off"))
-      .then(() => origin.get(host + "/pin7/on"));
+    origin.get(host + "/car/forwardLeft");
   } else if (type === "backwardRight") {
-    origin
-      .get(host + "/pin4/on")
-      .then(() => origin.get(host + "/pin5/off"))
-      .then(() => origin.get(host + "/pin6/on"))
-      .then(() => origin.get(host + "/pin7/off"));
+    origin.get(host + "/car/backwardRight");
   } else if (type === "backwardLeft") {
-    origin
-      .get(host + "/pin4/on")
-      .then(() => origin.get(host + "/pin5/off"))
-      .then(() => origin.get(host + "/pin6/off"))
-      .then(() => origin.get(host + "/pin7/on"));
+    origin.get(host + "/car/backwardLeft");
   } else if (["idle", "stop"].includes(type)) {
-    origin
-      .get(host + "/pin4/off")
-      .then(() => origin.get(host + "/pin6/off"))
-      .then(() => origin.get(host + "/pin5/off"))
-      .then(() => origin.get(host + "/pin7/off"));
+    origin.get(host + "/car/stop");
   }
 }
