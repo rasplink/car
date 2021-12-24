@@ -15,6 +15,49 @@ window.onkeydown = window.onkeyup = function (e) {
   detect(e);
 };
 
+const forwardBtn = $("#forward");
+const leftBtn = $("#left");
+const rightBtn = $("#right");
+const backwardBtn = $("#backward");
+const forwardLeftBtn = $("#forwardLeft");
+const forwardRightBtn = $("#forwardRight");
+const backwardLeftBtn = $("#backwardLeft");
+const backwardRightBtn = $("#backwardRight");
+const stopBtn = $("#stop");
+const btns = [forwardBtn, leftBtn, rightBtn, backwardBtn, forwardLeftBtn, forwardRightBtn, backwardLeftBtn, backwardRightBtn];
+
+forwardBtn.on("mousedown", e => forward());
+leftBtn.on("mousedown", e => left());
+rightBtn.on("mousedown", e => right());
+backwardBtn.on("mousedown", e => backward());
+forwardLeftBtn.on("mousedown", e => forwardLeft());
+forwardRightBtn.on("mousedown", e => forwardRight());
+backwardRightBtn.on("mousedown", e => backwardRight());
+backwardLeftBtn.on("mousedown", e => backwardLeft());
+stopBtn.on("mousedown", e => stop());
+// touch
+forwardBtn.on("touchstart", e => forward());
+leftBtn.on("touchstart", e => left());
+rightBtn.on("touchstart", e => right());
+backwardBtn.on("touchstart", e => backward());
+forwardLeftBtn.on("touchstart", e => forwardLeft());
+forwardRightBtn.on("touchstart", e => forwardRight());
+backwardRightBtn.on("touchstart", e => backwardRight());
+backwardLeftBtn.on("touchstart", e => backwardLeft());
+stopBtn.on("touchstart", e => stop());
+
+btns.forEach(btn => {
+  function up() {
+    isRunning = false;
+    // reset
+    oneKeyToggle = true;
+    twoKeysToggle = true;
+    idle();
+  }
+  btn.on("mouseup", e => up());
+  btn.on("touchend", e => up());
+});
+
 function detect(e) {
   finalKeys = []; // reset
 
