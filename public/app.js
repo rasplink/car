@@ -59,6 +59,7 @@ btns.forEach(btn => {
 });
 
 function detect(e) {
+  // console.log(e.keyCode);
   finalKeys = []; // reset
 
   if (e.type === "keyup") {
@@ -85,7 +86,23 @@ function detect(e) {
   else if (finalKeys.length === 1 && finalKeys[0] === 40) backward();
   else if (finalKeys.length === 1 && finalKeys[0] === 39) right();
   else if (finalKeys.length === 1 && finalKeys[0] === 37) left();
-  else if (e.type === "keydown" && e.keyCode === 17) auto();
+  // else if (e.type === "keydown" && e.keyCode === 17) auto();
+  else if (e.type === "keydown" && e.keyCode === 17) switchMotors();
+}
+
+let switchMotorsToggle = true;
+function switchMotors() {
+  if (switchMotorsToggle) {
+    switchMotorsToggle = false;
+    guide.textContent = "switchMotors => arm";
+    debug("switchMotors => arm");
+    signal("switchOn");
+  } else {
+    switchMotorsToggle = true;
+    guide.textContent = "switchMotors => car";
+    debug("switchMotors => car");
+    signal("switchOff");
+  }
 }
 
 function auto() {
@@ -195,7 +212,11 @@ function idle() {
 }
 
 function signal(type) {
-  if (type === "forward") {
+  if (type === "switchOn") {
+    origin.get(host + "/car/switch/on");
+  } else if (type === "switchOff") {
+    origin.get(host + "/car/switch/off");
+  } else if (type === "forward") {
     origin.get(host + "/car/forward");
   } else if (type === "backward") {
     origin.get(host + "/car/backward");
