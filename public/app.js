@@ -6,6 +6,7 @@ let twoKeysToggle = true;
 let isRunning = false;
 let keys = {};
 let finalKeys = [];
+let device = "car";
 window.onkeydown = window.onkeyup = function (e) {
   e = e || event;
   e.preventDefault();
@@ -59,6 +60,7 @@ btns.forEach(btn => {
 });
 
 function detect(e) {
+  device = "car";
   // console.log(e.keyCode);
   finalKeys = []; // reset
 
