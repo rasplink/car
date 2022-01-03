@@ -6,7 +6,6 @@ let twoKeysToggle = true;
 let isRunning = false;
 let keys = {};
 let finalKeys = [];
-let device = "car";
 window.onkeydown = window.onkeyup = function (e) {
   e = e || event;
   e.preventDefault();
@@ -27,24 +26,24 @@ const backwardRightBtn = $("#backwardRight");
 const stopBtn = $("#stop");
 const btns = [forwardBtn, leftBtn, rightBtn, backwardBtn, forwardLeftBtn, forwardRightBtn, backwardLeftBtn, backwardRightBtn];
 
-forwardBtn.on("mousedown", e => forward());
-leftBtn.on("mousedown", e => left());
-rightBtn.on("mousedown", e => right());
-backwardBtn.on("mousedown", e => backward());
-forwardLeftBtn.on("mousedown", e => forwardLeft());
-forwardRightBtn.on("mousedown", e => forwardRight());
-backwardRightBtn.on("mousedown", e => backwardRight());
-backwardLeftBtn.on("mousedown", e => backwardLeft());
+forwardBtn.on("mousedown", e => forward("car"));
+leftBtn.on("mousedown", e => left("car"));
+rightBtn.on("mousedown", e => right("car"));
+backwardBtn.on("mousedown", e => backward("car"));
+forwardLeftBtn.on("mousedown", e => forwardLeft("car"));
+forwardRightBtn.on("mousedown", e => forwardRight("car"));
+backwardRightBtn.on("mousedown", e => backwardRight("car"));
+backwardLeftBtn.on("mousedown", e => backwardLeft("car"));
 stopBtn.on("mousedown", e => stop());
 // touch
-forwardBtn.on("touchstart", e => forward());
-leftBtn.on("touchstart", e => left());
-rightBtn.on("touchstart", e => right());
-backwardBtn.on("touchstart", e => backward());
-forwardLeftBtn.on("touchstart", e => forwardLeft());
-forwardRightBtn.on("touchstart", e => forwardRight());
-backwardRightBtn.on("touchstart", e => backwardRight());
-backwardLeftBtn.on("touchstart", e => backwardLeft());
+forwardBtn.on("touchstart", e => forward("car"));
+leftBtn.on("touchstart", e => left("car"));
+rightBtn.on("touchstart", e => right("car"));
+backwardBtn.on("touchstart", e => backward("car"));
+forwardLeftBtn.on("touchstart", e => forwardLeft("car"));
+forwardRightBtn.on("touchstart", e => forwardRight("car"));
+backwardRightBtn.on("touchstart", e => backwardRight("car"));
+backwardLeftBtn.on("touchstart", e => backwardLeft("car"));
 stopBtn.on("touchstart", e => stop());
 
 btns.forEach(btn => {
@@ -76,165 +75,205 @@ function detect(e) {
     if (keys[key]) finalKeys.push(+key);
   }
   // debug([finalKeys]);
-
-  if (!finalKeys.length && e.type === "keyup" && [37, 38, 39, 40].includes(e.keyCode)) return idle();
+  if (!finalKeys.length && e.type === "keyup" && [37, 38, 39, 40, 87, 83, 68, 65].includes(e.keyCode)) return idle();
   if (e.type === "keydown" && e.keyCode === 32) return stop();
   // todo fix space key (32) not working with forwardLeft & backRight
-  if (finalKeys.length === 2 && finalKeys.includes(38) && finalKeys.includes(39)) forwardRight();
-  else if (finalKeys.length === 2 && finalKeys.includes(38) && finalKeys.includes(37)) forwardLeft();
-  else if (finalKeys.length === 2 && finalKeys.includes(40) && finalKeys.includes(39)) backwardRight();
-  else if (finalKeys.length === 2 && finalKeys.includes(40) && finalKeys.includes(37)) backwardLeft();
-  else if (finalKeys.length === 1 && finalKeys[0] === 38) forward();
-  else if (finalKeys.length === 1 && finalKeys[0] === 40) backward();
-  else if (finalKeys.length === 1 && finalKeys[0] === 39) right();
-  else if (finalKeys.length === 1 && finalKeys[0] === 37) left();
-  // else if (e.type === "keydown" && e.keyCode === 17) auto();
-  else if (e.type === "keydown" && e.keyCode === 17) switchMotors();
+  // car
+  if (finalKeys.length === 2 && finalKeys.includes(38) && finalKeys.includes(39)) forwardRight("car");
+  else if (finalKeys.length === 2 && finalKeys.includes(38) && finalKeys.includes(37)) forwardLeft("car");
+  else if (finalKeys.length === 2 && finalKeys.includes(40) && finalKeys.includes(39)) backwardRight("car");
+  else if (finalKeys.length === 2 && finalKeys.includes(40) && finalKeys.includes(37)) backwardLeft("car");
+  else if (finalKeys.length === 1 && finalKeys[0] === 38) forward("car");
+  else if (finalKeys.length === 1 && finalKeys[0] === 40) backward("car");
+  else if (finalKeys.length === 1 && finalKeys[0] === 39) right("car");
+  else if (finalKeys.length === 1 && finalKeys[0] === 37) left("car");
+  // arm
+  if (finalKeys.length === 2 && finalKeys.includes(87) && finalKeys.includes(68)) forwardRight("arm");
+  else if (finalKeys.length === 2 && finalKeys.includes(87) && finalKeys.includes(65)) forwardLeft("arm");
+  else if (finalKeys.length === 2 && finalKeys.includes(83) && finalKeys.includes(68)) backwardRight("arm");
+  else if (finalKeys.length === 2 && finalKeys.includes(83) && finalKeys.includes(65)) backwardLeft("arm");
+  else if (finalKeys.length === 1 && finalKeys[0] === 87) forward("arm");
+  else if (finalKeys.length === 1 && finalKeys[0] === 83) backward("arm");
+  else if (finalKeys.length === 1 && finalKeys[0] === 68) right("arm");
+  else if (finalKeys.length === 1 && finalKeys[0] === 65) left("arm");
+  else if (e.type === "keydown" && e.keyCode === 17) return task1();
 }
 
-let switchMotorsToggle = true;
-function switchMotors() {
-  if (switchMotorsToggle) {
-    switchMotorsToggle = false;
-    guide.textContent = "switchMotors => arm";
-    debug("switchMotors => arm");
-    signal("switchOn");
-  } else {
-    switchMotorsToggle = true;
-    guide.textContent = "switchMotors => car";
-    debug("switchMotors => car");
-    signal("switchOff");
-  }
+// todo fix async calls | it accepts two calls only
+async function task1() {
+  await forward("car");
+  await backward("car");
+  await wait(1000);
 }
 
-function auto() {
-  if (oneKeyToggle) {
-    oneKeyToggle = false;
-    isRunning = true;
-    guide.textContent = "auto";
-    debug("auto");
-    signal("auto");
-  }
+function wait(time) {
+  return new Promise(resolve => setTimeout(() => idle().then(resolve), time));
 }
 
-function forwardRight() {
-  if (twoKeysToggle) {
-    twoKeysToggle = false;
-    isRunning = true;
-    guide.textContent = "forwardRight";
-    debug("forwardRight");
-    signal("forwardRight");
-  }
+function forwardRight(device) {
+  return new Promise(resolve => {
+    if (twoKeysToggle) {
+      twoKeysToggle = false;
+      isRunning = true;
+      guide.textContent = "forwardRight " + device;
+      debug(["forwardRight", device]);
+      signal("forwardRight", device).then(resolve);
+    }
+  });
 }
 
-function forwardLeft() {
-  if (twoKeysToggle) {
-    twoKeysToggle = false;
-    isRunning = true;
-    guide.textContent = "forwardLeft";
-    debug("forwardLeft");
-    signal("forwardLeft");
-  }
+function forwardLeft(device) {
+  return new Promise(resolve => {
+    if (twoKeysToggle) {
+      twoKeysToggle = false;
+      isRunning = true;
+      guide.textContent = "forwardLeft " + device;
+      debug(["forwardLeft", device]);
+      signal("forwardLeft", device).then(resolve);
+    }
+  });
 }
 
-function backwardRight() {
-  if (twoKeysToggle) {
-    twoKeysToggle = false;
-    isRunning = true;
-    guide.textContent = "backwardRight";
-    debug("backwardRight");
-    signal("backwardRight");
-  }
+function backwardRight(device) {
+  return new Promise(resolve => {
+    if (twoKeysToggle) {
+      twoKeysToggle = false;
+      isRunning = true;
+      guide.textContent = "backwardRight " + device;
+      debug(["backwardRight", device]);
+      signal("backwardRight", device).then(resolve);
+    }
+  });
 }
 
-function backwardLeft() {
-  if (twoKeysToggle) {
-    twoKeysToggle = false;
-    isRunning = true;
-    guide.textContent = "backwardLeft";
-    debug("backwardLeft");
-    signal("backwardLeft");
-  }
+function backwardLeft(device) {
+  return new Promise(resolve => {
+    if (twoKeysToggle) {
+      twoKeysToggle = false;
+      isRunning = true;
+      guide.textContent = "backwardLeft " + device;
+      debug(["backwardLeft", device]);
+      signal("backwardLeft", device).then(resolve);
+    }
+  });
 }
 
-function forward() {
-  if (oneKeyToggle) {
-    oneKeyToggle = false;
-    isRunning = true;
-    guide.textContent = "forward";
-    debug("forward");
-    signal("forward");
-  }
+function forward(device) {
+  return new Promise(resolve => {
+    if (oneKeyToggle) {
+      oneKeyToggle = false;
+      isRunning = true;
+      guide.textContent = "forward " + device;
+      debug(["forward", device]);
+      signal("forward", device).then(resolve);
+    }
+  });
 }
 
-function backward() {
-  if (oneKeyToggle) {
-    oneKeyToggle = false;
-    isRunning = true;
-    guide.textContent = "backward";
-    debug("backward");
-    signal("backward");
-  }
+function backward(device) {
+  return new Promise(resolve => {
+    if (oneKeyToggle) {
+      oneKeyToggle = false;
+      isRunning = true;
+      guide.textContent = "backward " + device;
+      debug(["backward", device]);
+      signal("backward", device).then(resolve);
+    }
+  });
 }
 
-function right() {
-  if (oneKeyToggle) {
-    oneKeyToggle = false;
-    isRunning = true;
-    guide.textContent = "right";
-    debug("right");
-    signal("right");
-  }
+function right(device) {
+  return new Promise(resolve => {
+    if (oneKeyToggle) {
+      oneKeyToggle = false;
+      isRunning = true;
+      guide.textContent = "right " + device;
+      debug(["right", device]);
+      signal("right", device).then(resolve);
+    }
+  });
 }
 
-function left() {
-  if (oneKeyToggle) {
-    oneKeyToggle = false;
-    isRunning = true;
-    guide.textContent = "left";
-    debug("left");
-    signal("left");
-  }
+function left(device) {
+  return new Promise(resolve => {
+    if (oneKeyToggle) {
+      oneKeyToggle = false;
+      isRunning = true;
+      guide.textContent = "left " + device;
+      debug(["left", device]);
+      signal("left", device).then(resolve);
+    }
+  });
 }
 
 function stop() {
-  if (isRunning) {
-    isRunning = false;
-    guide.textContent = "stop";
-    debug("stop");
-    signal("stop");
-  }
+  return new Promise(resolve => {
+    if (isRunning) {
+      isRunning = false;
+      guide.textContent = "stop";
+      debug("stop");
+      signal("stop").then(resolve);
+    }
+  });
 }
 
 function idle() {
-  isRunning = false;
-  guide.textContent = "idle";
-  debug("idle");
-  signal("idle");
+  return new Promise(resolve => {
+    isRunning = false;
+    guide.textContent = "idle";
+    debug("idle");
+    signal("idle").then(resolve);
+  });
 }
 
-function signal(type) {
-  if (type === "switchOn") {
-    origin.get(host + "/car/switch/on");
-  } else if (type === "switchOff") {
-    origin.get(host + "/car/switch/off");
-  } else if (type === "forward") {
-    origin.get(host + "/car/forward");
-  } else if (type === "backward") {
-    origin.get(host + "/car/backward");
-  } else if (type === "right") {
-    origin.get(host + "/car/right");
-  } else if (type === "left") {
-    origin.get(host + "/car/left");
-  } else if (type === "forwardRight") {
-    origin.get(host + "/car/forwardRight");
-  } else if (type === "forwardLeft") {
-    origin.get(host + "/car/forwardLeft");
-  } else if (type === "backwardRight") {
-    origin.get(host + "/car/backwardRight");
-  } else if (type === "backwardLeft") {
-    origin.get(host + "/car/backwardLeft");
-  } else if (["idle", "stop"].includes(type)) {
-    origin.get(host + "/car/stop");
-  }
+function signal(type, device) {
+  const endpoint = host + "/" + device;
+  return new Promise((resolve, reject) => {
+    if (type === "forward") {
+      origin
+        .get(endpoint + "/forward")
+        .then(resolve)
+        .catch(reject);
+    } else if (type === "backward") {
+      origin
+        .get(endpoint + "/backward")
+        .then(resolve)
+        .catch(reject);
+    } else if (type === "right") {
+      origin
+        .get(endpoint + "/right")
+        .then(resolve)
+        .catch(reject);
+    } else if (type === "left") {
+      origin
+        .get(endpoint + "/left")
+        .then(resolve)
+        .catch(reject);
+    } else if (type === "forwardRight") {
+      origin
+        .get(endpoint + "/forwardRight")
+        .then(resolve)
+        .catch(reject);
+    } else if (type === "forwardLeft") {
+      origin
+        .get(endpoint + "/forwardLeft")
+        .then(resolve)
+        .catch(reject);
+    } else if (type === "backwardRight") {
+      origin
+        .get(endpoint + "/backwardRight")
+        .then(resolve)
+        .catch(reject);
+    } else if (type === "backwardLeft") {
+      origin
+        .get(endpoint + "/backwardLeft")
+        .then(resolve)
+        .catch(reject);
+    } else if (["idle", "stop"].includes(type)) {
+      origin
+        .get(host + "/stop")
+        .then(resolve)
+        .catch(reject);
+    }
+  });
 }
