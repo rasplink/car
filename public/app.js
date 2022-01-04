@@ -59,7 +59,6 @@ btns.forEach(btn => {
 });
 
 function detect(e) {
-  device = "car";
   // console.log(e.keyCode);
   finalKeys = []; // reset
 
@@ -98,16 +97,41 @@ function detect(e) {
   else if (finalKeys.length === 1 && finalKeys[0] === 65) left("arm");
   else if (e.type === "keydown" && e.keyCode === 17) return task1();
 }
-
-// todo fix async calls | it accepts two calls only
+//todo  update arduino with "forwardRight" to start with "right" then "forward" 
 async function task1() {
+  await forward("arm");
+  await wait(500);
+  await idle();
+  await left("arm");
+  await wait(500);
+  await idle();
   await forward("car");
+  await wait(1000);
+  await idle();
+  await backward("arm");
+  await wait(1000);
+  await idle();
+  await right("arm");
+  await forward("arm");
+  await wait(1000);
+  await idle();
+  await left("arm");
+  await wait(500);
+  await idle();
   await backward("car");
   await wait(1000);
+  await idle();
 }
 
 function wait(time) {
-  return new Promise(resolve => setTimeout(() => idle().then(resolve), time));
+  return new Promise(resolve => {
+    setTimeout(() => {
+      isRunning = false;
+      oneKeyToggle = true;
+      twoKeysToggle = true;
+      resolve();
+    }, time);
+  });
 }
 
 function forwardRight(device) {
