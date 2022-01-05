@@ -1,3 +1,28 @@
+window.SpeechRecognition =
+  window.SpeechRecognition ||
+  window.webkitSpeechRecognition ||
+  window.mozSpeechRecognition ||
+  window.msSpeechRecognition ||
+  window.oSpeechRecognition;
+// mic
+const recognition = new SpeechRecognition();
+recognition.lang = "en-US";
+// recognition.interimResults = true;
+// max number of alternative transcripts
+recognition.maxAlternatives = 5;
+// recognition.continuous = true;
+// speaker
+const synth = window.speechSynthesis;
+const speech = new SpeechSynthesisUtterance();
+const voices = synth.getVoices();
+// set voice
+// speech.voice = voices[10]; // Note: some voices don't support altering params
+speech.voiceURI = "native";
+speech.lang = "en-US";
+speech.volume = 1;
+speech.rate = 0.9;
+speech.pitch = 0.7;
+
 const guide = $("#guide");
 const origin = new Origin();
 const host = "http://192.168.1.55";
@@ -95,41 +120,91 @@ function detect(e) {
   else if (finalKeys.length === 1 && finalKeys[0] === 83) backward("arm");
   else if (finalKeys.length === 1 && finalKeys[0] === 68) right("arm");
   else if (finalKeys.length === 1 && finalKeys[0] === 65) left("arm");
-  else if (e.type === "keydown" && e.keyCode === 17) return task1();
+  else if (e.type === "keydown" && e.keyCode === 17) return getTheMedicineTask();
 }
-//todo  update arduino with "forwardRight" to start with "right" then "forward" 
-async function task1() {
-  await forward("arm");
-  await wait(500);
-  await idle();
-  await left("arm");
-  await wait(500);
-  await idle();
-  await forward("car");
-  await wait(1000);
-  await idle();
-  await backward("arm");
-  await wait(1000);
-  await idle();
-  await right("arm");
-  await forward("arm");
-  await wait(1000);
-  await idle();
-  await left("arm");
-  await wait(500);
-  await idle();
-  await backward("car");
-  await wait(1000);
-  await idle();
+let isListening = false;
+let autoRestart = true;
+if ("SpeechRecognition" in window && "speechSynthesis" in window) {
+  recognition.onstart = () => (isListening = true);
+  recognition.onend = () => (isListening = false);
+  recognition.onerror = e => {
+    if (e.error == "not-allowed" || e.error == "service-not-allowed") {
+      autoRestart = false;
+      console.error(`Recognition is not allowed!\n Please refresh the page and enable the mic.`);
+    }
+  };
+  recognition.onresult = e => {
+    // get spoken text
+    const transcript = Array.from(e.results)
+      .map(result => result[0])
+      .map(result => result.transcript)
+      .join("");
+    console.log({ transcript });
+
+    //* if done recognition
+    if (e.results[0].isFinal) {
+      isListening = false;
+      console.log("got " + transcript);
+      if (transcript.includes("medicine")) {
+        say("roger that");
+        getTheMedicineTask();
+      }
+    }
+  };
+
+  setInterval(() => {
+    if (autoRestart) {
+      if (!isListening && !synth.speaking) {
+        console.log("Recognition Started");
+        recognition.abort();
+        recognition.start();
+      } else if (synth.speaking && isListening) {
+        console.log("Recognition Aborted");
+        recognition.abort();
+      } else if ((isListening && !synth.speaking) || (synth.speaking && !isListening)) {
+        console.log("Return Nothing");
+        return;
+      }
+    }
+  }, 1000);
+} else {
+  console.warn(`Your browser is not supported!\n It's prefered to use the lastest version of google chrome.`);
 }
 
-function wait(time) {
+function say(text) {
+  speech.text = text;
+  synth.speak(speech);
+}
+
+const speed = 1;
+const time = 1100;
+const distance = speed * time;
+async function getTheMedicineTask() {
+  await forwardLeft("arm");
+  await wait(1000, true);
+  await forward("car");
+  await wait(distance, true);
+  await backwardLeft("arm");
+  await wait(500, true);
+  await right("arm");
+  await wait(1000, true);
+  await forwardRight("arm");
+  await wait(1000, true);
+  await left("arm");
+  await wait(500, true);
+  await backward("car");
+  await wait(distance, true);
+  say("here you are");
+}
+
+function wait(time, stop) {
   return new Promise(resolve => {
     setTimeout(() => {
       isRunning = false;
       oneKeyToggle = true;
       twoKeysToggle = true;
-      resolve();
+      if (stop) idle().then(resolve);
+      else resolve();
     }, time);
   });
 }
