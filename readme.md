@@ -1,4 +1,6 @@
-> An IOT project for controlling RC Car `wirelessly`
+> An IOT project for controlling RC Car with Phone or PC using `WIFI`
+
+<p align="center"><img width="320" src="./img/car.png" alt="nodebot"></p>
 
 ### Requirements:
 - Hardware:
