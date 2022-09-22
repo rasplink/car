@@ -206,11 +206,11 @@ function onDeviceReady() {
   }
 
   function signal(type) {
-    const endpoint = domain + "/api/car";
     return new Promise((resolve, reject) => {
       if (["idle", "stop"].includes(type)) {
+        debug(domain + "/pins/stop");
         origin
-          .get(endpoint + "/stop")
+          .get(domain + "/pins/stop")
           .then(res => {
             errContainer.textContent = "";
             resolve(res);
@@ -220,8 +220,10 @@ function onDeviceReady() {
             reject(err);
           });
       } else {
-        origin
-          .get(endpoint + "/" + type)
+        function init(arg) {
+          debug(domain + "/" + arg);
+          origin
+          .get(domain + "/" + arg)
           .then(res => {
             errContainer.textContent = "";
             resolve(res);
@@ -230,6 +232,35 @@ function onDeviceReady() {
             errContainer.textContent = err;
             reject(err);
           });
+        }
+        let route = "";
+        switch (type) {
+          case "forward":
+            route = "pin4"
+            break;
+          case "backward":
+            route = "pin5"
+            break;
+          case "right":
+            route = "pin6"
+            break;
+          case "left":
+            route = "pin7"
+            break;
+          case "forwardRight":
+            route = "pin/4/6"
+            break;
+          case "forwardLeft":
+            route = "pin/4/7"
+            break;
+          case "backwardRight":
+            route = "pin/5/6"
+            break;
+          case "backwardLeft":
+            route = "pin/5/7"
+            break;
+        }
+        init(route);
       }
     });
   }

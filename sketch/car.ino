@@ -1,7 +1,7 @@
 #include <ESP8266WiFi.h>
 
-const char *ssid = "wifiName";
-const char *password = "wifiPassword";
+const char *ssid = "Buyurun";
+const char *password = "varpass='E!$@_pk-01116576964-1912-2019';";
 
 int pin4 = D4;
 int pin5 = D5;
@@ -78,7 +78,7 @@ void loop()
   client.flush();
 
   // handle pins signal (on/off) based on the endpoint route
-  // 4
+  // 4 forward
   if (request.indexOf("/pin4") != -1)
   {
     digitalWrite(pin4, LOW);
@@ -88,7 +88,7 @@ void loop()
     digitalWrite(pin7, HIGH);
   }
 
-  // 5
+  // 5 backward
   if (request.indexOf("/pin5") != -1)
   {
     digitalWrite(pin5, LOW);
@@ -98,7 +98,7 @@ void loop()
     digitalWrite(pin7, HIGH);
   }
 
-  // 6
+  // 6 right
   if (request.indexOf("/pin6") != -1)
   {
     digitalWrite(pin6, LOW);
@@ -108,7 +108,7 @@ void loop()
     digitalWrite(pin7, HIGH);
   }
 
-  // 7
+  // 7 left
   if (request.indexOf("/pin7") != -1)
   {
     digitalWrite(pin7, LOW);
@@ -119,7 +119,7 @@ void loop()
   }
 
 
-  // 4/6
+  // 4/6 forward right
   if (request.indexOf("/pin/4/6") != -1)
   {
     digitalWrite(pin4, LOW);
@@ -130,7 +130,7 @@ void loop()
   }
 
 
-  // 4/7
+  // 4/7 forward left
   if (request.indexOf("/pin/4/7") != -1)
   {
     digitalWrite(pin4, LOW);
@@ -140,7 +140,7 @@ void loop()
     digitalWrite(pin6, HIGH);
   }
 
-  // 5/6
+  // 5/6 backward right
   if (request.indexOf("/pin/5/6") != -1)
   {
     digitalWrite(pin5, LOW);
@@ -150,7 +150,7 @@ void loop()
     digitalWrite(pin7, HIGH);
   }
 
-  // 5/7
+  // 5/7 backword left
   if (request.indexOf("/pin/5/7") != -1)
   {
     digitalWrite(pin5, LOW);
