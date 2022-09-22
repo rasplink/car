@@ -7,7 +7,6 @@ int pin4 = D4;
 int pin5 = D5;
 int pin6 = D6;
 int pin7 = D7;
-
 WiFiServer server(80);
 
 void setup()
@@ -16,7 +15,7 @@ void setup()
   delay(10);
 
   // special case to wemos d1 wifi, high means off, low means on
-  // make relays off | initial status
+  // relays | initial status
   // 4
   pinMode(pin4, OUTPUT);
   digitalWrite(pin4, HIGH);
@@ -78,86 +77,105 @@ void loop()
   Serial.println(request);
   client.flush();
 
-  // handle car movements
-  /* 
-    forward
-    right
-    backward
-    left
-    stop
-    forwardRight
-    forwardLeft
-    backwardRight
-    backwardLeft
-  */ 
-
+  // handle pins signal (on/off) based on the endpoint route
   // 4
-  if (request.indexOf("/api/car/forward") != -1) { // forward = 4
-    digitalWrite(pin4, LOW); // on
-    // the rest off
-    digitalWrite(pin5, HIGH);
-    digitalWrite(pin6, HIGH);
-    digitalWrite(pin7, HIGH);
-  } else if (request.indexOf("/api/car/backward")) { // backward = 5
-    digitalWrite(pin5, LOW); // on
-    // the rest off
-    digitalWrite(pin4, HIGH);
-    digitalWrite(pin6, HIGH);
-    digitalWrite(pin7, HIGH);
-  } else if (request.indexOf("/api/car/right")) { // right = 6
-    digitalWrite(pin6, LOW); // on
-    // the rest off
-    digitalWrite(pin4, HIGH);
-    digitalWrite(pin5, HIGH);
-    digitalWrite(pin7, HIGH);
-  } else if (request.indexOf("/api/car/left")) { // left = 7
-    digitalWrite(pin7, LOW); // on
-    // the rest off
-    digitalWrite(pin4, HIGH);
-    digitalWrite(pin5, HIGH);
-    digitalWrite(pin6, HIGH);
-  } else if (request.indexOf("/api/car/forwardRight")) {
-    // on
+  if (request.indexOf("/pin4") != -1)
+  {
     digitalWrite(pin4, LOW);
-    digitalWrite(pin6, LOW); 
-    // the rest off
+
+    digitalWrite(pin5, HIGH);
+    digitalWrite(pin6, HIGH);
+    digitalWrite(pin7, HIGH);
+  }
+
+  // 5
+  if (request.indexOf("/pin5") != -1)
+  {
+    digitalWrite(pin5, LOW);
+
+    digitalWrite(pin4, HIGH);
+    digitalWrite(pin6, HIGH);
+    digitalWrite(pin7, HIGH);
+  }
+
+  // 6
+  if (request.indexOf("/pin6") != -1)
+  {
+    digitalWrite(pin6, LOW);
+
+    digitalWrite(pin4, HIGH);
     digitalWrite(pin5, HIGH);
     digitalWrite(pin7, HIGH);
-  } else if (request.indexOf("/api/car/forwardLeft")) {
-    // on
+  }
+
+  // 7
+  if (request.indexOf("/pin7") != -1)
+  {
+    digitalWrite(pin7, LOW);
+
+    digitalWrite(pin4, HIGH);
+    digitalWrite(pin5, HIGH);
+    digitalWrite(pin6, HIGH);
+  }
+
+
+  // 4/6
+  if (request.indexOf("/pin/4/6") != -1)
+  {
+    digitalWrite(pin4, LOW);
+    digitalWrite(pin6, LOW);
+
+    digitalWrite(pin5, HIGH);
+    digitalWrite(pin7, HIGH);
+  }
+
+
+  // 4/7
+  if (request.indexOf("/pin/4/7") != -1)
+  {
     digitalWrite(pin4, LOW);
     digitalWrite(pin7, LOW);
-    // the rest off
+
     digitalWrite(pin5, HIGH);
-    digitalWrite(pin6, HIGH); 
-  } else if (request.indexOf("/api/car/backwardRight")) {
-    // on
+    digitalWrite(pin6, HIGH);
+  }
+
+  // 5/6
+  if (request.indexOf("/pin/5/6") != -1)
+  {
     digitalWrite(pin5, LOW);
-    digitalWrite(pin6, LOW); 
-    // the rest off
+    digitalWrite(pin6, LOW);
+
     digitalWrite(pin4, HIGH);
     digitalWrite(pin7, HIGH);
-  } else if (request.indexOf("/api/car/backwardLeft")) {
-    // on
+  }
+
+  // 5/7
+  if (request.indexOf("/pin/5/7") != -1)
+  {
     digitalWrite(pin5, LOW);
     digitalWrite(pin7, LOW);
-    // the rest off
+
     digitalWrite(pin4, HIGH);
-    digitalWrite(pin6, HIGH); 
-  } else if (request.indexOf("/api/car/stop")) {
-    // switch all relays off
+    digitalWrite(pin6, HIGH);
+  }
+
+  // stop
+  if (request.indexOf("/pins/stop") != -1)
+  {
     digitalWrite(pin4, HIGH);
     digitalWrite(pin5, HIGH);
     digitalWrite(pin6, HIGH);
     digitalWrite(pin7, HIGH);
   }
 
+
   // Return the response
   client.println("HTTP/1.1 200 OK");
   client.println("Access-Control-Allow-Origin: *");
   client.println("Content-Type: application/json");
   client.println(""); // do not forget this one
-  client.println("{status: ok}");
+  client.println("{success: true}");
 
   delay(1);
   Serial.println("Client disconnected");

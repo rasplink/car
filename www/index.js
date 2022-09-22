@@ -2,6 +2,7 @@ document.addEventListener("deviceready", onDeviceReady, false);
 onDeviceReady(); // uncomment to test on pc browser
 function onDeviceReady() {
   const statusContainer = $("#status");
+  const errContainer = $("#error");
   const forwardBtn = $("#forward");
   const leftBtn = $("#left");
   const rightBtn = $("#right");
@@ -93,7 +94,7 @@ function onDeviceReady() {
       if (twoKeysToggle) {
         twoKeysToggle = false;
         isRunning = true;
-        statusContainer.textContent = "Forward Right";
+        statusContainer.textContent = "↗️";
         debug("forwardRight");
         signal("forwardRight").then(resolve).catch(reject);
       }
@@ -105,7 +106,7 @@ function onDeviceReady() {
       if (twoKeysToggle) {
         twoKeysToggle = false;
         isRunning = true;
-        statusContainer.textContent = "Forward Left";
+        statusContainer.textContent = "↖️";
         debug("forwardLeft");
         signal("forwardLeft").then(resolve).catch(reject);
       }
@@ -117,7 +118,7 @@ function onDeviceReady() {
       if (twoKeysToggle) {
         twoKeysToggle = false;
         isRunning = true;
-        statusContainer.textContent = "Backward Right";
+        statusContainer.textContent = "↘️";
         debug("backwardRight");
         signal("backwardRight").then(resolve).catch(reject);
       }
@@ -129,7 +130,7 @@ function onDeviceReady() {
       if (twoKeysToggle) {
         twoKeysToggle = false;
         isRunning = true;
-        statusContainer.textContent = "Backward Left";
+        statusContainer.textContent = "↙️";
         debug("backwardLeft");
         signal("backwardLeft").then(resolve).catch(reject);
       }
@@ -141,7 +142,7 @@ function onDeviceReady() {
       if (oneKeyToggle) {
         oneKeyToggle = false;
         isRunning = true;
-        statusContainer.textContent = "Forward";
+        statusContainer.textContent = "⬆️";
         debug("forward");
         signal("forward").then(resolve).catch(reject);
       }
@@ -153,7 +154,7 @@ function onDeviceReady() {
       if (oneKeyToggle) {
         oneKeyToggle = false;
         isRunning = true;
-        statusContainer.textContent = "Backward";
+        statusContainer.textContent = "⬇️";
         debug("backward");
         signal("backward").then(resolve).catch(reject);
       }
@@ -165,7 +166,7 @@ function onDeviceReady() {
       if (oneKeyToggle) {
         oneKeyToggle = false;
         isRunning = true;
-        statusContainer.textContent = "Right";
+        statusContainer.textContent = "➡️";
         debug("right");
         signal("right").then(resolve).catch(reject);
       }
@@ -177,7 +178,7 @@ function onDeviceReady() {
       if (oneKeyToggle) {
         oneKeyToggle = false;
         isRunning = true;
-        statusContainer.textContent = "Left";
+        statusContainer.textContent = "⬅️";
         debug("left");
         signal("left").then(resolve).catch(reject);
       }
@@ -188,7 +189,7 @@ function onDeviceReady() {
     return new Promise((resolve, reject) => {
       if (isRunning) {
         isRunning = false;
-        statusContainer.textContent = "Stop";
+        statusContainer.textContent = "⛔️";
         debug("stop");
         signal("stop").then(resolve).catch(reject);
       }
@@ -210,13 +211,25 @@ function onDeviceReady() {
       if (["idle", "stop"].includes(type)) {
         origin
           .get(endpoint + "/stop")
-          .then(resolve)
-          .catch(reject);
+          .then(res => {
+            errContainer.textContent = "";
+            resolve(res);
+          })
+          .catch(err => {
+            errContainer.textContent = err;
+            reject(err);
+          });
       } else {
         origin
           .get(endpoint + "/" + type)
-          .then(resolve)
-          .catch(reject);
+          .then(res => {
+            errContainer.textContent = "";
+            resolve(res);
+          })
+          .catch(err => {
+            errContainer.textContent = err;
+            reject(err);
+          });
       }
     });
   }

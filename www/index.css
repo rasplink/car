@@ -22,7 +22,7 @@ main h3 {
   margin: 0;
   letter-spacing: 1px;
   color: white;
-  font-size: 18px;
+  font-size: 35px;
   font-weight: normal;
 }
 main .btns {
@@ -45,4 +45,9 @@ main .btns button svg {
 }
 main .btns button svg path {
   color: white;
+}
+main p {
+  margin: 0;
+  padding: 0 10px;
+  font-size: 14px;
 }/*# sourceMappingURL=index.css.map */
