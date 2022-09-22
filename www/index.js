@@ -1,5 +1,5 @@
 document.addEventListener("deviceready", onDeviceReady, false);
-// onDeviceReady(); // uncomment to test on pc browser
+onDeviceReady(); // uncomment to test on pc browser
 function onDeviceReady() {
   const statusContainer = $("#status");
   const forwardBtn = $("#forward");
@@ -205,7 +205,7 @@ function onDeviceReady() {
   }
 
   function signal(type) {
-    const endpoint = domain + "/car";
+    const endpoint = domain + "/api/car";
     return new Promise((resolve, reject) => {
       if (["idle", "stop"].includes(type)) {
         origin

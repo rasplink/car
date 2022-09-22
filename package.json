@@ -2,6 +2,7 @@
   "name": "xyz.eissa.car",
   "displayName": "Car",
   "version": "1.0.0",
+  "private": true,
   "description": "An iot project for RC Car",
   "main": "index.js",
   "scripts": {
