@@ -1,22 +1,30 @@
 {
-  "name": "car",
+  "name": "xyz.eissa.car",
+  "displayName": "Car",
   "version": "1.0.0",
-  "description": "",
+  "description": "An iot project for RC Car",
   "main": "index.js",
   "scripts": {
-    "dev": "sudo chmod a+rwx /dev/ttyACM0 && node index.js"
+    "android": "cordova platform add android@9.1.0",
+    "build": "cordova build android",
+    "serve": "node server.js"
   },
-  "keywords": [
-    "nodebot",
-    "car",
-    "robot"
-  ],
   "author": "Eissa Saber",
   "license": "MIT",
+  "devDependencies": {
+    "cordova-android": "^9.1.0",
+    "cordova-plugin-whitelist": "^1.3.5",
+    "express": "^4.18.1"
+  },
+  "cordova": {
+    "plugins": {
+      "cordova-plugin-whitelist": {}
+    },
+    "platforms": [
+      "android"
+    ]
+  },
   "dependencies": {
-    "colors": "^1.4.0",
-    "express": "^4.17.1",
-    "johnny-five": "^2.1.0",
-    "keypress": "^0.2.1"
+    "cordova": "^10.0.0"
   }
 }
