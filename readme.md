@@ -3,8 +3,12 @@
 ### Requirements:
 - Hardware:
     - An arduino (wemos d1 wifi)
-    - Power bank (5V, 1A) for arduino or a normal charger with the same current and voltage
-    - A two module relay
+    - Power bank (5V, 1A) for arduino 
+    - A four module relay
+    - small breadboard
+    - diode
+    - an old RC Car
+    - a 6 volt battery for car motors
     - Jumper wires
 
 - Software:
@@ -15,8 +19,15 @@
     - java jdk + setting up java environment variables (only for building android app)
 
 ### Wiring
-- connect pin 6 and 7 of the arduino with signals pins of the relay
-- power up the relay from arduino on the pin with 5v along side with any ground pin
+- connect pin 4,5,6,7 of the arduino with signal pins of the 4 module relay
+- power up the relay from arduino on the pin with 5v along side with any ground pin (put the diode in between the arduino 5v pin and the vcc of the relay to make the current flows from arduino to relay board not the opposite)
+
+- connect the two motors with the 4 module relay (nc,com,no) like this circuit below
+<br/>
+![circuit](./img/circuit.png)
+<br/>
+    _the circuit shows connection of one motor with two relays (direction: forward, reverse), and we have two motors so we need 4 relays_
+
 - plug-in the 5v 1a power bank to the arduino
 
 ### Uploading sketch
@@ -34,9 +45,9 @@
 
 ---
 
-> After uploading sketch to arduino it will connect right away on you wifi network so you can check arduino internal `ip` and modify the [domain variable](./www/js/index.js) with arduino ip
+> After uploading sketch to arduino it will connect right away on your wifi network so you can check arduino internal `ip` and modify the [domain variable](./www/index.js) with arduino ip
 
-## For controlling the light and fan run below commands:
+## For controlling the car run below commands:
 
 #### Getting started
 ```bash

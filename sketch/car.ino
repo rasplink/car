@@ -1,7 +1,7 @@
 #include <ESP8266WiFi.h>
 
-const char *ssid = "Buyurun";
-const char *password = "varpass='E!$@_pk-01116576964-1912-2019';";
+const char *ssid = "yourWifiName";
+const char *password = "yourWifiPassword";
 
 int pin4 = D4;
 int pin5 = D5;
