@@ -27,7 +27,7 @@
 - select port e.g. tools > port > /dev/ttyUSB0
 - modify the mode of your board e.g. sudo chmod a+rwx /dev/ttyUSB0
 - select upload speed e.g. tools > upload speed > 115200 
-- add your [code](./arduino/smartHouse.ino) and click verify then upload (of course you need to modify the ssid and password to suit you wifi network)
+- add your [code](./sketch/car.ino) and click verify then upload (of course you need to modify the ssid and password to suit you wifi network)
 - see if there are any errors in the logs down below and try to solve them
 
 > Pro Tip: try to unplug any wires connected to arduino expect the usb cable while uploading your code to avoid any errors, also some errors maybe related to python symlinks
