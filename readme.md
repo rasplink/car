@@ -23,9 +23,9 @@
 - power up the relay from arduino on the pin with 5v along side with any ground pin (put the diode in between the arduino 5v pin and the vcc of the relay to make the current flows from arduino to relay board not the opposite)
 
 - connect the two motors with the 4 module relay (nc,com,no) like this circuit below
-<br/>
-![circuit](./img/circuit.png)
-<br/>
+
+    ![circuit](./img/circuit.png)
+
     _the circuit shows connection of one motor with two relays (direction: forward, reverse), and we have two motors so we need 4 relays_
 
 - plug-in the 5v 1a power bank to the arduino
